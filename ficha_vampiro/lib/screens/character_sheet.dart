@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ficha_vampiro/game_data.dart'; // Importa os Clãs
+import 'habilidades_box.dart'; // Importa o widget de Habilidades
 
 class CharacterSheet extends StatefulWidget {
   const CharacterSheet({super.key});
@@ -24,6 +25,34 @@ class _CharacterSheetState extends State<CharacterSheet> {
   int inteligencia = 1;
   int raciocinio = 1;
 
+  // Habilidades
+  int empatiaComAnimais = 1;
+  int academicos = 1;
+  int briga = 1;
+  int etiqueta = 1;
+  int prontidao = 1;
+  int empatia = 1;
+  int financas = 1;
+  int conducao = 1;
+  int intimidacao = 1;
+  int investigacao = 1;
+  int armasDeFogo = 1;
+  int lideranca = 1;
+  int medicina = 1;
+  int furto = 1;
+  int expressao = 1;
+  int ocultismo = 1;
+  int armasBrancas = 1;
+  int persuasao = 1;
+  int politica = 1;
+  int furtividade = 1;
+  int manha = 1;
+  int ciencia = 1;
+  int sobrevivencia = 1;
+  int subterfugio = 1;
+  int tecnologia = 1;
+  int oficios = 1;
+
   // Informações do personagem
   String nome = "";
   String clan = "";
@@ -44,7 +73,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
             width: 110,
             child: Text(
               nome,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
           Row(
@@ -53,8 +82,8 @@ class _CharacterSheetState extends State<CharacterSheet> {
                 onTap: () => onChanged(index + 1),
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 2),
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: index < valor ? Colors.red : Colors.grey[800],
@@ -70,25 +99,35 @@ class _CharacterSheetState extends State<CharacterSheet> {
   }
 
   Widget blocoAtributos(String titulo, List<Widget> atributos) {
-    return Expanded(
+    return Container(
+      width: MediaQuery.of(context).size.width / 3 -
+          24, // Ajuste o tamanho dos blocos de atributos
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 1.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            titulo,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ...atributos,
+        ],
+      ),
+    );
+  }
+
+  Widget linhaDivisoria() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
-        padding: const EdgeInsets.all(8),
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white, width: 1.5),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              titulo,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...atributos,
-          ],
-        ),
+        height: 1,
+        color: Colors.white,
       ),
     );
   }
@@ -106,7 +145,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
         children: [
           Text(
             titulo,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Row(
@@ -139,7 +178,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
               blocoInformacoes("Informações do Personagem", [
                 [
                   _campoTexto("Nome", (value) => setState(() => nome = value)),
-                  Container(
+                  SizedBox(
                     height:
                         56, // Ajuste a altura para padronizar com os outros campos
                     child: DropdownButtonFormField<String>(
@@ -155,7 +194,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
                           clan = value!;
                         });
                       },
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: "Clã",
                         border: OutlineInputBorder(),
                       ),
@@ -169,7 +208,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
                 [
                   _campoTexto(
                       "Jogador", (value) => setState(() => jogador = value)),
-                  Container(
+                  SizedBox(
                     height:
                         56, // Ajuste a altura para padronizar com os outros campos
                     child: DropdownButtonFormField<String>(
@@ -235,6 +274,122 @@ class _CharacterSheetState extends State<CharacterSheet> {
                         (val) => setState(() => raciocinio = val)),
                   ]),
                 ],
+              ),
+              linhaDivisoria(),
+              // Habilidades
+              HabilidadesBox(
+                habilidades: [
+                  {"nome": "Empatia com Animais", "valor": empatiaComAnimais},
+                  {"nome": "Acadêmicos", "valor": academicos},
+                  {"nome": "Briga", "valor": briga},
+                  {"nome": "Etiqueta", "valor": etiqueta},
+                  {"nome": "Prontidão", "valor": prontidao},
+                  {"nome": "Empatia", "valor": empatia},
+                  {"nome": "Finanças", "valor": financas},
+                  {"nome": "Condução", "valor": conducao},
+                  {"nome": "Intimidação", "valor": intimidacao},
+                  {"nome": "Investigação", "valor": investigacao},
+                  {"nome": "Armas de Fogo", "valor": armasDeFogo},
+                  {"nome": "Liderança", "valor": lideranca},
+                  {"nome": "Medicina", "valor": medicina},
+                  {"nome": "Furto", "valor": furto},
+                  {"nome": "Expressão", "valor": expressao},
+                  {"nome": "Ocultismo", "valor": ocultismo},
+                  {"nome": "Armas Brancas", "valor": armasBrancas},
+                  {"nome": "Persuasão", "valor": persuasao},
+                  {"nome": "Política", "valor": politica},
+                  {"nome": "Furtividade", "valor": furtividade},
+                  {"nome": "Manha", "valor": manha},
+                  {"nome": "Ciência", "valor": ciencia},
+                  {"nome": "Sobrevivência", "valor": sobrevivencia},
+                  {"nome": "Subterfúgio", "valor": subterfugio},
+                  {"nome": "Tecnologia", "valor": tecnologia},
+                  {"nome": "Ofícios", "valor": oficios},
+                ],
+                onChanged: (nome, valor) {
+                  setState(() {
+                    switch (nome) {
+                      case "Empatia com Animais":
+                        empatiaComAnimais = valor;
+                        break;
+                      case "Acadêmicos":
+                        academicos = valor;
+                        break;
+                      case "Briga":
+                        briga = valor;
+                        break;
+                      case "Etiqueta":
+                        etiqueta = valor;
+                        break;
+                      case "Prontidão":
+                        prontidao = valor;
+                        break;
+                      case "Empatia":
+                        empatia = valor;
+                        break;
+                      case "Finanças":
+                        financas = valor;
+                        break;
+                      case "Condução":
+                        conducao = valor;
+                        break;
+                      case "Intimidação":
+                        intimidacao = valor;
+                        break;
+                      case "Investigação":
+                        investigacao = valor;
+                        break;
+                      case "Armas de Fogo":
+                        armasDeFogo = valor;
+                        break;
+                      case "Liderança":
+                        lideranca = valor;
+                        break;
+                      case "Medicina":
+                        medicina = valor;
+                        break;
+                      case "Furto":
+                        furto = valor;
+                        break;
+                      case "Expressão":
+                        expressao = valor;
+                        break;
+                      case "Ocultismo":
+                        ocultismo = valor;
+                        break;
+                      case "Armas Brancas":
+                        armasBrancas = valor;
+                        break;
+                      case "Persuasão":
+                        persuasao = valor;
+                        break;
+                      case "Política":
+                        politica = valor;
+                        break;
+                      case "Furtividade":
+                        furtividade = valor;
+                        break;
+                      case "Manha":
+                        manha = valor;
+                        break;
+                      case "Ciência":
+                        ciencia = valor;
+                        break;
+                      case "Sobrevivência":
+                        sobrevivencia = valor;
+                        break;
+                      case "Subterfúgio":
+                        subterfugio = valor;
+                        break;
+                      case "Tecnologia":
+                        tecnologia = valor;
+                        break;
+                      case "Ofícios":
+                        oficios = valor;
+                        break;
+                    }
+                  });
+                },
               ),
             ],
           ),

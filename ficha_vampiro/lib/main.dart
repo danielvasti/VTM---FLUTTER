@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/character_sheet.dart'; // Importa a tela da ficha
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
