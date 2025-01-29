@@ -106,8 +106,10 @@ class _CharacterSheetState extends State<CharacterSheet> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
+          // Usando Wrap para colocar os campos lado a lado
           Wrap(
-            spacing: 16,
+            spacing: 16, // Espaçamento horizontal entre os campos
+            runSpacing: 16, // Espaçamento vertical entre as linhas de campos
             children: campos,
           ),
         ],
