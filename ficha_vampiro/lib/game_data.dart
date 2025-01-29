@@ -1,0 +1,38 @@
+const List<String> clans = [
+  "Brujah",
+  "Gangrel",
+  "Malkavian",
+  "Nosferatu",
+  "Toreador",
+  "Tremere",
+  "Ventrue",
+  "Lasombra",
+  "Tzimisce",
+  "Banu Haqim",
+  "Caitiff",
+  "Ministry",
+  "Hecata",
+  "Ravnos",
+  "Salubri",
+];
+
+const List<String> predator = [
+  "Alleycat (Gatuno)",
+  "Bagger (Sacoleiro)",
+  "Blood Leech (Sanguessuga)",
+  "Cleaver (Apegado)",
+  "Collector (Colecionador)",
+  "Consensualist (Consensualista)",
+  "Extortionist (Extorcionista)",
+  "Farmer (Agricultor)",
+  "Graverobber (Ladrão de Túmulos)",
+  "Grim Reaper (Ceifador)",
+  "Montero (Montero)",
+  "Osiris (Osíris)",
+  "Pursuer (Perseguidor)",
+  "Sandman (Homem da Areia)",
+  "Roadside Killer (Assassino de Estrada)",
+  "Scene Queen (Rainha da Cena)",
+  "Siren (Sereia)",
+  "Trapdoor"
+];

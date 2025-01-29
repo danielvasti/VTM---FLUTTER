@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ficha_vampiro/game_data.dart'; // Importa os Clãs
 
 class CharacterSheet extends StatefulWidget {
+  const CharacterSheet({super.key});
+
   @override
   _CharacterSheetState createState() => _CharacterSheetState();
 }
@@ -23,25 +26,25 @@ class _CharacterSheetState extends State<CharacterSheet> {
 
   // Informações do personagem
   String nome = "";
-  String nomeJogador = "";
-  String idade = "";
   String clan = "";
-  String tipoPredador = "";
+  String seita = "";
+  String jogador = "";
+  String predador = "";
+  String titulo = "";
+  String cronica = "";
   String ambicao = "";
   String desejo = "";
-  String conceito = "";
-  String outraInfo = "";
 
   Widget atributoRow(String nome, int valor, Function(int) onChanged) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           SizedBox(
-            width: 110, // Define um tamanho fixo para os nomes dos atributos
+            width: 110,
             child: Text(
               nome,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           Row(
@@ -49,8 +52,8 @@ class _CharacterSheetState extends State<CharacterSheet> {
               return GestureDetector(
                 onTap: () => onChanged(index + 1),
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 2),
-                  width: 24, // Tamanho fixo para os pontos
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  width: 24,
                   height: 24,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -69,8 +72,8 @@ class _CharacterSheetState extends State<CharacterSheet> {
   Widget blocoAtributos(String titulo, List<Widget> atributos) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white, width: 1.5),
           borderRadius: BorderRadius.circular(8),
@@ -80,9 +83,9 @@ class _CharacterSheetState extends State<CharacterSheet> {
           children: [
             Text(
               titulo,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             ...atributos,
           ],
         ),
@@ -90,10 +93,10 @@ class _CharacterSheetState extends State<CharacterSheet> {
     );
   }
 
-  Widget blocoInformacoes(String titulo, List<Widget> campos) {
+  Widget blocoInformacoes(String titulo, List<List<Widget>> campos) {
     return Container(
-      padding: EdgeInsets.all(8),
-      margin: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.white, width: 1.5),
         borderRadius: BorderRadius.circular(8),
@@ -103,14 +106,20 @@ class _CharacterSheetState extends State<CharacterSheet> {
         children: [
           Text(
             titulo,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
-          // Usando Wrap para colocar os campos lado a lado
-          Wrap(
-            spacing: 16, // Espaçamento horizontal entre os campos
-            runSpacing: 16, // Espaçamento vertical entre as linhas de campos
-            children: campos,
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: campos
+                .map(
+                  (coluna) => Expanded(
+                    child: Column(
+                      children: coluna,
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -120,29 +129,81 @@ class _CharacterSheetState extends State<CharacterSheet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Ficha de Vampiro")),
+      appBar: AppBar(title: const Text("Ficha de Vampiro")),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               // Informações do personagem
               blocoInformacoes("Informações do Personagem", [
-                _campoTexto("Nome", (value) => setState(() => nome = value)),
-                _campoTexto("Nome do Jogador",
-                    (value) => setState(() => nomeJogador = value)),
-                _campoTexto("Idade", (value) => setState(() => idade = value)),
-                _campoTexto("Clã", (value) => setState(() => clan = value)),
-                _campoTexto("Tipo de Predador",
-                    (value) => setState(() => tipoPredador = value)),
-                _campoTexto(
-                    "Ambição", (value) => setState(() => ambicao = value)),
-                _campoTexto(
-                    "Desejo", (value) => setState(() => desejo = value)),
-                _campoTexto(
-                    "Conceito", (value) => setState(() => conceito = value)),
-                _campoTexto("Outra Informação",
-                    (value) => setState(() => outraInfo = value)),
+                [
+                  _campoTexto("Nome", (value) => setState(() => nome = value)),
+                  Container(
+                    height:
+                        56, // Ajuste a altura para padronizar com os outros campos
+                    child: DropdownButtonFormField<String>(
+                      value: clan.isNotEmpty ? clan : null,
+                      items: clans.map((String cl) {
+                        return DropdownMenuItem<String>(
+                          value: cl,
+                          child: Text(cl),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          clan = value!;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Clã",
+                        border: OutlineInputBorder(),
+                      ),
+                      isExpanded:
+                          true, // Isso ajuda a garantir que o Dropdown se expanda corretamente
+                    ),
+                  ),
+                  _campoTexto(
+                      "Seita", (value) => setState(() => seita = value)),
+                ],
+                [
+                  _campoTexto(
+                      "Jogador", (value) => setState(() => jogador = value)),
+                  Container(
+                    height:
+                        56, // Ajuste a altura para padronizar com os outros campos
+                    child: DropdownButtonFormField<String>(
+                      value: predador.isNotEmpty ? predador : null,
+                      items: predator.map((String prd) {
+                        return DropdownMenuItem<String>(
+                          value: prd,
+                          child: Text(prd),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          predador = value!;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: "Predador",
+                        border: OutlineInputBorder(),
+                      ),
+                      isExpanded:
+                          true, // Isso ajuda a garantir que o Dropdown se expanda corretamente
+                    ),
+                  ),
+                  _campoTexto(
+                      "Título", (value) => setState(() => titulo = value)),
+                ],
+                [
+                  _campoTexto(
+                      "Crônica", (value) => setState(() => cronica = value)),
+                  _campoTexto(
+                      "Ambição", (value) => setState(() => ambicao = value)),
+                  _campoTexto(
+                      "Desejo", (value) => setState(() => desejo = value)),
+                ],
               ]),
 
               // Atributos Físicos, Sociais e Mentais
@@ -184,13 +245,13 @@ class _CharacterSheetState extends State<CharacterSheet> {
 
   // Campo de texto genérico para informações do personagem
   Widget _campoTexto(String label, Function(String) onChanged) {
-    return SizedBox(
-      width: 150,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: TextField(
         onChanged: onChanged,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );

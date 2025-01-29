@@ -6,13 +6,15 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ficha de Vampiro',
-      theme: ThemeData.dark(), // Tema escuro para combinar com o RPG
-      home: CharacterSheet(), // Define a ficha como a tela inicial
+      theme: ThemeData.dark(),
+      home: const CharacterSheet(), // Define a ficha como a tela inicial
     );
   }
 }
