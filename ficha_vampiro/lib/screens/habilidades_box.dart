@@ -27,6 +27,7 @@ class HabilidadesBox extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                 child: Column(
@@ -67,12 +68,14 @@ class HabilidadesBox extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 110,
+            width: 160,
             child: Text(
               nome,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
           ),
           Row(

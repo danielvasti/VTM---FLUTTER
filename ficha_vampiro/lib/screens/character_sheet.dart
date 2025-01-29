@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ficha_vampiro/game_data.dart'; // Importa os Clãs
+import 'package:shared_preferences/shared_preferences.dart'; // Importa o shared_preferences
 import 'habilidades_box.dart'; // Importa o widget de Habilidades
 
 class CharacterSheet extends StatefulWidget {
@@ -52,6 +53,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
   int subterfugio = 1;
   int tecnologia = 1;
   int oficios = 1;
+  int esportes = 1; // Nova habilidade
 
   // Informações do personagem
   String nome = "";
@@ -64,6 +66,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
   String ambicao = "";
   String desejo = "";
 
+  // Função para gerar a linha de atributos
   Widget atributoRow(String nome, int valor, Function(int) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -98,10 +101,21 @@ class _CharacterSheetState extends State<CharacterSheet> {
     );
   }
 
+  // Função para dividir com linha
+  Widget linhaDivisoria() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        height: 1,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  // Função para criar blocos de atributos
   Widget blocoAtributos(String titulo, List<Widget> atributos) {
     return Container(
-      width: MediaQuery.of(context).size.width / 3 -
-          24, // Ajuste o tamanho dos blocos de atributos
+      width: MediaQuery.of(context).size.width / 3 - 24,
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
@@ -122,16 +136,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
     );
   }
 
-  Widget linhaDivisoria() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        height: 1,
-        color: Colors.white,
-      ),
-    );
-  }
-
+  // Função para criar blocos de informações do personagem
   Widget blocoInformacoes(String titulo, List<List<Widget>> campos) {
     return Container(
       padding: const EdgeInsets.all(8),
@@ -179,15 +184,12 @@ class _CharacterSheetState extends State<CharacterSheet> {
                 [
                   _campoTexto("Nome", (value) => setState(() => nome = value)),
                   SizedBox(
-                    height:
-                        56, // Ajuste a altura para padronizar com os outros campos
+                    height: 56,
                     child: DropdownButtonFormField<String>(
                       value: clan.isNotEmpty ? clan : null,
                       items: clans.map((String cl) {
                         return DropdownMenuItem<String>(
-                          value: cl,
-                          child: Text(cl),
-                        );
+                            value: cl, child: Text(cl));
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
@@ -198,8 +200,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
                         labelText: "Clã",
                         border: OutlineInputBorder(),
                       ),
-                      isExpanded:
-                          true, // Isso ajuda a garantir que o Dropdown se expanda corretamente
+                      isExpanded: true,
                     ),
                   ),
                   _campoTexto(
@@ -209,15 +210,12 @@ class _CharacterSheetState extends State<CharacterSheet> {
                   _campoTexto(
                       "Jogador", (value) => setState(() => jogador = value)),
                   SizedBox(
-                    height:
-                        56, // Ajuste a altura para padronizar com os outros campos
+                    height: 56,
                     child: DropdownButtonFormField<String>(
                       value: predador.isNotEmpty ? predador : null,
                       items: predator.map((String prd) {
                         return DropdownMenuItem<String>(
-                          value: prd,
-                          child: Text(prd),
-                        );
+                            value: prd, child: Text(prd));
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
@@ -228,8 +226,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
                         labelText: "Predador",
                         border: OutlineInputBorder(),
                       ),
-                      isExpanded:
-                          true, // Isso ajuda a garantir que o Dropdown se expanda corretamente
+                      isExpanded: true,
                     ),
                   ),
                   _campoTexto(
@@ -244,6 +241,8 @@ class _CharacterSheetState extends State<CharacterSheet> {
                       "Desejo", (value) => setState(() => desejo = value)),
                 ],
               ]),
+
+              linhaDivisoria(),
 
               // Atributos Físicos, Sociais e Mentais
               Row(
@@ -275,7 +274,9 @@ class _CharacterSheetState extends State<CharacterSheet> {
                   ]),
                 ],
               ),
+
               linhaDivisoria(),
+
               // Habilidades
               HabilidadesBox(
                 habilidades: [
@@ -288,6 +289,7 @@ class _CharacterSheetState extends State<CharacterSheet> {
                   {"nome": "Finanças", "valor": financas},
                   {"nome": "Condução", "valor": conducao},
                   {"nome": "Intimidação", "valor": intimidacao},
+                  {"nome": "Esportes", "valor": esportes},
                   {"nome": "Investigação", "valor": investigacao},
                   {"nome": "Armas de Fogo", "valor": armasDeFogo},
                   {"nome": "Liderança", "valor": lideranca},
@@ -335,6 +337,9 @@ class _CharacterSheetState extends State<CharacterSheet> {
                         break;
                       case "Intimidação":
                         intimidacao = valor;
+                        break;
+                      case "Esportes":
+                        esportes = valor;
                         break;
                       case "Investigação":
                         investigacao = valor;
@@ -391,6 +396,14 @@ class _CharacterSheetState extends State<CharacterSheet> {
                   });
                 },
               ),
+
+              linhaDivisoria(),
+
+              // Botão de Salvar
+              ElevatedButton(
+                onPressed: _salvarFicha,
+                child: const Text("Salvar Ficha"),
+              ),
             ],
           ),
         ),
@@ -398,16 +411,73 @@ class _CharacterSheetState extends State<CharacterSheet> {
     );
   }
 
-  // Campo de texto genérico para informações do personagem
+  // Função para salvar os dados usando SharedPreferences
+  void _salvarFicha() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('nome', nome);
+    await prefs.setString('clan', clan);
+    await prefs.setString('seita', seita);
+    await prefs.setString('jogador', jogador);
+    await prefs.setString('predador', predador);
+    await prefs.setString('titulo', titulo);
+    await prefs.setString('cronica', cronica);
+    await prefs.setString('ambicao', ambicao);
+    await prefs.setString('desejo', desejo);
+
+    // Salvar os atributos e habilidades
+    await prefs.setInt('forca', forca);
+    await prefs.setInt('destreza', destreza);
+    await prefs.setInt('vigor', vigor);
+    await prefs.setInt('carisma', carisma);
+    await prefs.setInt('manipulacao', manipulacao);
+    await prefs.setInt('aparencia', aparencia);
+    await prefs.setInt('percepcao', percepcao);
+    await prefs.setInt('inteligencia', inteligencia);
+    await prefs.setInt('raciocinio', raciocinio);
+
+    await prefs.setInt('empatiaComAnimais', empatiaComAnimais);
+    await prefs.setInt('academicos', academicos);
+    await prefs.setInt('briga', briga);
+    await prefs.setInt('etiqueta', etiqueta);
+    await prefs.setInt('prontidao', prontidao);
+    await prefs.setInt('empatia', empatia);
+    await prefs.setInt('financas', financas);
+    await prefs.setInt('conducao', conducao);
+    await prefs.setInt('intimidacao', intimidacao);
+    await prefs.setInt('investigacao', investigacao);
+    await prefs.setInt('armasDeFogo', armasDeFogo);
+    await prefs.setInt('lideranca', lideranca);
+    await prefs.setInt('medicina', medicina);
+    await prefs.setInt('furto', furto);
+    await prefs.setInt('expressao', expressao);
+    await prefs.setInt('ocultismo', ocultismo);
+    await prefs.setInt('armasBrancas', armasBrancas);
+    await prefs.setInt('persuasao', persuasao);
+    await prefs.setInt('politica', politica);
+    await prefs.setInt('furtividade', furtividade);
+    await prefs.setInt('manha', manha);
+    await prefs.setInt('ciencia', ciencia);
+    await prefs.setInt('sobrevivencia', sobrevivencia);
+    await prefs.setInt('subterfugio', subterfugio);
+    await prefs.setInt('tecnologia', tecnologia);
+    await prefs.setInt('oficios', oficios);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ficha salva com sucesso!')),
+    );
+  }
+
+  // Função para criar campo de texto
   Widget _campoTexto(String label, Function(String) onChanged) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: TextField(
-        onChanged: onChanged,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
+        onChanged: onChanged,
       ),
     );
   }
