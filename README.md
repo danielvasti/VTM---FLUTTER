@@ -1,5 +1,7 @@
 # **Ficha de RPG - Vampiro: A Máscara**
 
+**EM ANDAMENTO!**
+
 Este projeto é uma **ficha interativa de RPG** desenvolvida em **Flutter**, com o objetivo de facilitar a criação e gerenciamento de personagens para o jogo **Vampiro: A Máscara**. A ficha foi projetada para ser simples, funcional e visualmente alinhada com a estética do jogo, permitindo que jogadores e mestres de jogo acompanhem os atributos e informações do personagem durante a campanha.
 
 ## **Funcionalidades**
